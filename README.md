@@ -49,7 +49,13 @@ cd $build
 
 ### **Terark-Native**
 - checkout branch to ```terark-native```
-- Build and compile
+```
+sudo apt-get install libaio-dev
+```
+- Before building, open ```WITH_TOOLS``` and ```WITH_TERARK_ZIP```, it's neccessary for remote compaction mode.
+```
+./build.sh
+```
 - Use ```remote_compaction_worker_101```
 
 ### **Terark-CaaS**
@@ -57,6 +63,19 @@ cd $build
 - Change ```CompactionArgs``` to ```string```, since TerarkDB uses encoded string in network transmit.
 - Use the same way in CaaS-LSM to start.
 
+### To evaluate the baselines
+Run db_bench
+```
+./db_bench --benchmarks="fillrandom" --num=4000000 --statistics --threads=16 --max_background_compactions=8 --db=/xxx/xxx  --statistics
+```
+#### OPS comparison
+![ops](https://github.com/asd1ej9h/CaaS-LSM/assets/113972303/88d00f46-e5a8-4fbc-88a0-6d4d79f5a867)
+
+#### P99 latency comparison
+![p99](https://github.com/asd1ej9h/CaaS-LSM/assets/113972303/394b4c10-476a-41c6-983e-6209236a869e)
+
+#### Conclusion
+The OPS of CaaS-LSM surpassed Disaggre-RocksDB by up to 61%, and TerarkDB-CaaS surpassed native TerarkDB up to 42%.
 
 ## Test CaaS-LSM in distributed applications
 
@@ -87,3 +106,24 @@ cd $build
     - A fast way to build cluster: ```python scripts/e2e_test.py```
     - Check cluster status: ```./_build/kvrocks-controller-cli -c ./config/kc_cli_config.yaml```
     - modify kvrocks.conf: port(e.g., 30001-30006), cluster-enabled(yes), dir /tmp/kvrocks(/tmp/kvrocks1-6)
+
+### Evaluation Results
+#### OPS of Nebula
+
+![nebula_sche_ops](https://github.com/asd1ej9h/CaaS-LSM/assets/113972303/6efd5434-ec76-4127-86cf-7eea1fad5d20)
+
+#### Latency of Nebula
+![nebula_sche_latency](https://github.com/asd1ej9h/CaaS-LSM/assets/113972303/d9cbfd85-996b-4af8-a1f6-7607fa9ccf8d)
+
+#### Conclusion
+Nebula-Random-Sche has a total OPS of 5,669 and an average latency of 526 ms, which are about 86% lower and 6$X$ higher than Nebula-CaaS-LSM respectively.
+
+
+#### OPS of Kvrocks
+![kvrocks_ops_new_2](https://github.com/asd1ej9h/CaaS-LSM/assets/113972303/ab1610c6-c720-4845-91fa-5a9aa10d0d6e)
+
+#### Latency of Kvrocks
+![kvrocks_latency_new_2](https://github.com/asd1ej9h/CaaS-LSM/assets/113972303/dfb30952-bbd8-43aa-b296-19621a83edae)
+
+#### Conclusion
+With better scheduling of compaction jobs in Kvrocks-CaaS, the overall OPS is about 20% better than that of Kvrocks-Local, and the average latency improves by 30%. In the cross-datacenter scenario, according to the log file, Kvrocks-Local experiences compaction jobs piled and a severe write slowdown after intensive compaction starts. In contrast, Kvrocks-CaaS runs smoothly and improves the overall OPS by 28% and P99 latency by 65%.
