@@ -40,7 +40,7 @@ cd $build
 ```
 git checkout disaggre-rocksdb
 cd $build
-./csa_server # The name is the same, but the function of CSA is different with CaaS-LSM
+./csa_server # The name is the same, but the function of CSA is different with that of CaaS-LSM
 ```
 
 ### **Terark-Local**
