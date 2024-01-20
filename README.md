@@ -1,13 +1,25 @@
-## **CaaS-LSM**
+# **CaaS-LSM**
 
-### **Dependencies**
+## **Dependencies**
 
 - Linux - Ubuntu
     - Prepare for the dependencies of RocksDB: [https://github.com/facebook/rocksdb/blob/main/INSTALL.md](https://github.com/facebook/rocksdb/blob/main/INSTALL.md)
     - Install and config HDFS server
     - Install gRPC
 
-### **Use of Control Plane (remote compaction mode)**
+## Baselines
+
+- Notice that multiple CSAs should bind with one Control Plane.
+### **Rocks-Local**
+Search the repository for this code and delete it.
+```c++
+tmp_options.compaction_service = std::make_shared<MyTestCompactionService>(
+      dbname, compaction_options, compaction_stats, remote_listeners,
+      remote_table_properties_collector_factories);
+```
+
+
+### **CaaS-LSM**
 
 - Config the address of Control Plane, CSA, and HDFS server in `include/rocksdb/options.h`
 - Build and compile
@@ -19,16 +31,34 @@ cd $build
 ./csa_server #run CSA server
 ```
 
-- Notice that multiple CSAs should bind with one Control Plane.
-### **The local compaction mode**
-Search the repository for this code and delete it.
-```c++
-tmp_options.compaction_service = std::make_shared<MyTestCompactionService>(
-      dbname, compaction_options, compaction_stats, remote_listeners,
-      remote_table_properties_collector_factories);
+
+### **Disaggre-RocksDB**
+- Config the address of CSA, and HDFS server in `include/rocksdb/options.h`
+- Build and compile
+- Run CSA
+
+```
+git checkout disaggre-rocksdb
+cd $build
+./csa_server # The name is the same, but the function of CSA is different with CaaS-LSM
 ```
 
+### **Terark-Local**
+- clone repo: https://github.com/bytedance/terarkdb
+- Build and compile
 
+### **Terark-Native**
+- checkout branch to ```terark-native```
+- Build and compile
+- Use ```remote_compaction_worker_101```
+
+### **Terark-CaaS**
+- Copy the code in ```db/compaction/remote_compaction``` of CaaS-LSM, including ```procp_server.cc```, ```csa_server.cc```, ```utils.h```, ```compaction_service.proto```
+- Change ```CompactionArgs``` to ```string```, since TerarkDB uses encoded string in network transmit.
+- Use the same way in CaaS-LSM to start.
+
+
+## Test CaaS-LSM in distributed applications
 
 ### Test Nebula
 - Use the branch ```nebula```, follow the tips in https://docs.nebula-graph.io/3.2.0/4.deployment-and-installation/2.compile-and-install-nebula-graph/1.install-nebula-graph-by-compiling-the-source-code/ 
