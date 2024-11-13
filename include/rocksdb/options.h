@@ -2115,7 +2115,7 @@ struct OpenAndCompactOptions {
   std::atomic<bool>* canceled = nullptr;
 
 #ifdef HDFS
-  std::string hdfs_address = "hdfs://hdfs-master:9000/";
+  std::string hdfs_address = "hdfs://10.10.1.5:9000/";
 
   std::string csa_address = "10.10.1.3:8010";
 
