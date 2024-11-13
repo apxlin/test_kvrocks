@@ -2115,11 +2115,11 @@ struct OpenAndCompactOptions {
   std::atomic<bool>* canceled = nullptr;
 
 #ifdef HDFS
-  std::string hdfs_address = "hdfs://10.218.106.144:9000/";
+  std::string hdfs_address = "hdfs://hdfs-master:9000/";
 
-  std::string csa_address = "10.218.106.144:8010";
+  std::string csa_address = "10.10.1.3:8010";
 
-  std::string pro_cp_address = "10.218.106.144:8020";
+  std::string pro_cp_address = "10.10.1.3:8020";
 
   int32_t check_time_interval = 1;
 
