@@ -1021,7 +1021,7 @@ list(APPEND SOURCES
 if(WITH_HDFS)
   set(ROCKSDB_PLUGINS "hdfs")
   add_definitions(-DHDFS)
-  include_directories(/users/apx2018/hadoop-3.3.5/include)
+  # include_directories(/users/apx2018/hadoop-3.3.5/include)
 endif ()
 
 message(STATUS "ROCKSDB_PLUGINS: ${ROCKSDB_PLUGINS}")
